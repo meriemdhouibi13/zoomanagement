@@ -6,6 +6,9 @@
 #include "Penguin.h"
 #include "Parrot.h"
 #include "Exceptions.h"
+#include "AnimalFactory.h"
+#include "Enclosure.h"
+#include "Veterinarian.h"
 #include <iostream>
 #include <limits>
 #include <cstdlib>
@@ -125,7 +128,11 @@ void displayMenu() {
     cout << "11. Demonstrate Polymorphism" << endl;
     cout << "12. Save to File" << endl;
     cout << "13. Load from File" << endl;
-    cout << "0.  Exit" << endl;
+    cout << "\n--- BONUS FEATURES ---" << endl;
+    cout << "14. Use Animal Factory" << endl;
+    cout << "15. Manage Enclosures" << endl;
+    cout << "16. Veterinarian Demo" << endl;
+    cout << "\n0.  Exit" << endl;
     cout << "============================================" << endl;
     cout << "Enter choice: ";
 }
@@ -292,6 +299,103 @@ void loadFromFileMenu(Zoo& zoo) {
     }
 }
 
+// ========================================
+// BONUS FEATURE FUNCTIONS
+// ========================================
+
+void animalFactoryMenu(Zoo& zoo) {
+    cout << "\n=== Animal Factory (Factory Pattern) ===" << endl;
+    AnimalFactory::listAvailableSpecies();
+    
+    cout << "\nEnter species name: ";
+    string species;
+    cin.ignore();
+    getline(cin, species);
+    
+    cout << "Enter name: ";
+    string name;
+    getline(cin, name);
+    
+    cout << "Enter age: ";
+    int age;
+    cin >> age;
+    
+    cout << "Enter weight (kg): ";
+    double weight;
+    cin >> weight;
+    
+    try {
+        IAnimal* animal = AnimalFactory::createAnimal(species, name, age, weight);
+        zoo.addAnimal(animal);
+        cout << "\n? Animal created and added using Factory Pattern!" << endl;
+    }
+    catch (const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+    }
+}
+
+void enclosureMenu() {
+    cout << "\n=== Enclosure Management (Template Pattern) ===" << endl;
+    cout << "Creating specialized enclosures..." << endl;
+    
+    // Create lion enclosure
+    Enclosure<Lion> lionEnclosure("Lion Pride", 5);
+    
+    cout << "\nAdding lions to enclosure..." << endl;
+    lionEnclosure.addAnimal(new Lion("Leo", 5, 190, true, "Golden", 110, 25, true));
+    lionEnclosure.addAnimal(new Lion("Luna", 4, 130, true, "Tan", 110, 0, false));
+    
+    lionEnclosure.displayAnimals();
+    
+    cout << "\nMaking all lions roar..." << endl;
+    lionEnclosure.makeAllSounds();
+    
+    cout << "\nFood requirement: " << lionEnclosure.calculateTotalFoodRequirement() 
+         << " kg" << endl;
+    
+    cout << "\n? Enclosure demo complete! (Animals will be cleaned up automatically)" << endl;
+}
+
+void veterinarianMenu(Zoo& zoo) {
+    cout << "\n=== Veterinarian System (Observer Pattern) ===" << endl;
+    
+    // Create veterinarian
+    Veterinarian vet("Rodriguez", "Exotic Animals");
+    
+    cout << "\nSelect an animal to examine:" << endl;
+    cout << "Enter animal name: ";
+    string name;
+    cin.ignore();
+    getline(cin, name);
+    
+    try {
+        IAnimal* animal = zoo.findAnimal(name);
+        Animal* a = dynamic_cast<Animal*>(animal);
+        
+        if (a) {
+            // Perform checkup
+            vet.performCheckup(a);
+            
+            // Simulate getting sick
+            cout << "\n>>> Simulating health issue..." << endl;
+            a->setHealthStatus(false);
+            
+            // Create observable and attach veterinarian
+            ObservableAnimal observable(a);
+            observable.attach(&vet);
+            
+            // Notify (Observer Pattern in action!)
+            observable.notifyHealthIssue();
+            
+            // Display stats
+            vet.displayStats();
+        }
+    }
+    catch (const exception& e) {
+        cerr << "Error: " << e.what() << endl;
+    }
+}
+
 int main() {
     srand(time(0)); // Seed random number generator
     
@@ -365,6 +469,15 @@ int main() {
                 break;
             case 13:
                 loadFromFileMenu(myZoo);
+                break;
+            case 14:
+                animalFactoryMenu(myZoo);
+                break;
+            case 15:
+                enclosureMenu();
+                break;
+            case 16:
+                veterinarianMenu(myZoo);
                 break;
             case 0:
                 cout << "\nThank you for visiting Wildlife Paradise!" << endl;
