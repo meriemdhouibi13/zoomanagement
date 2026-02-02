@@ -1,0 +1,239 @@
+================================================================================
+           WILDLIFE SANCTUARY SIMULATOR - CLASS HIERARCHY
+================================================================================
+
+                              ┌──────────────┐
+                              │   IAnimal    │ (Interface)
+                              │<<interface>> │
+                              │              │
+                              │ + makeSound()│ = 0
+                              │ + eat()      │ = 0
+                              │ + sleep()    │ = 0
+                              │ + getSpecies()│ = 0
+                              └──────┬───────┘
+                                     │ implements
+                                     ↓
+                              ┌──────────────┐
+                              │    Animal    │ (Abstract Base)
+                              │ <<abstract>> │
+                              │              │
+                              │ # name       │
+                              │ # age        │
+                              │ # weight     │
+                              │ # isHealthy  │
+                              │              │
+                              │ + getName()  │
+                              │ + getAge()   │
+                              │ + displayInfo()│
+                              │ + performCheckup()│
+                              │ + calculateFood()│
+                              └──────┬───────┘
+                                     │ extends
+               ┌─────────────────────┴─────────────────────┐
+               │                                           │
+               ↓                                           ↓
+        ┌──────────────┐                           ┌──────────────┐
+        │    Mammal    │                           │     Bird     │
+        │              │                           │              │
+        │ # hasFur     │                           │ # wingspan   │
+        │ # furColor   │                           │ # canFly     │
+        │ # gestation  │                           │ # beakType   │
+        │              │                           │              │
+        │ + nurse()    │                           │ + fly()      │
+        │ + getFurColor()│                         │ + buildNest()│
+        └──────┬───────┘                           └──────┬───────┘
+               │                                          │
+    ┌──────────┼──────────┐                    ┌─────────┼─────────┐
+    │          │          │                    │         │         │
+    ↓          ↓          ↓                    ↓         ↓         ↓
+┌────────┐ ┌─────────┐ ┌────────┐      ┌────────┐ ┌─────────┐ ┌────────┐
+│  Lion  │ │Elephant │ │ Monkey │      │ Eagle  │ │ Penguin │ │ Parrot │
+│        │ │         │ │        │      │        │ │         │ │        │
+│-maneSize│ │-trunk   │ │-tail   │     │-claws  │ │-swim    │ │-vocab  │
+│-isAlpha│ │-tusks   │ │-prehenl│     │-vision │ │-dive    │ │-plumage│
+│        │ │         │ │        │      │        │ │         │ │        │
+│+roar() │ │+trumpet │ │+climb()│      │+screech│ │+waddle()│ │+mimic()│
+│+hunt() │ │+spray() │ │+swing()│      │+dive() │ │+slide() │ │+talk() │
+└────────┘ └─────────┘ └────────┘      └────────┘ └─────────┘ └────────┘
+  ROAR!      PAHROOO!    Ooh ooh!      SCREECH!    HONK HONK!   SQUAWK!
+ Carnivore   Herbivore   Omnivore     Carnivore    Carnivore   Herbivore
+  Pride       Trunk      Climbing      Hunting     Swimming    Mimicking
+ Behavior    Behavior    Behavior     Behavior     Behavior    Behavior
+
+================================================================================
+                         ZOO MANAGEMENT SYSTEM
+================================================================================
+
+                              ┌──────────────┐
+                              │     Zoo      │
+                              │              │
+                              │ - animals[]  │ vector<IAnimal*>
+                              │ - zooName    │
+                              │ - capacity   │
+                              │              │
+                              │ + addAnimal()│
+                              │ + removeAnimal()│
+                              │ + makeAllSounds()│
+                              │ + feedAllAnimals()│
+                              │ + displayAllAnimals()│
+                              │ + performCheckups()│
+                              │ + findAnimal()│
+                              │ + saveToFile()│
+                              │ + loadFromFile()│
+                              └───────────────┘
+                                      │
+                                      │ manages
+                                      ↓
+                              (Collection of IAnimal*)
+                              /    |    |    |    \
+                         Lion  Eagle  Penguin  etc.
+
+================================================================================
+                         EXCEPTION HIERARCHY
+================================================================================
+
+                         ┌──────────────────┐
+                         │  std::exception  │
+                         └────────┬─────────┘
+                                  │
+                    ┌─────────────┼─────────────┐
+                    │             │             │
+                    ↓             ↓             ↓
+           ┌──────────────┐ ┌─────────────┐ ┌──────────────────┐
+           │AnimalNotFound│ │  ZooFull    │ │InvalidOperation  │
+           │Exception     │ │Exception    │ │Exception         │
+           └──────────────┘ └─────────────┘ └──────────────────┘
+
+================================================================================
+                           POLYMORPHISM FLOW
+================================================================================
+
+IAnimal* animal = new Lion("Simba", ...);
+         │
+         │ Store as base pointer
+         ↓
+zoo.addAnimal(animal);
+         │
+         │ Store in vector<IAnimal*>
+         ↓
+zoo.makeAllSounds();
+         │
+         │ Iterate through animals
+         ↓
+for each IAnimal* in animals:
+    animal->makeSound();  ← Virtual function call
+         │
+         │ Runtime binding
+         ↓
+    Lion::makeSound() executed
+    Output: "ROOOAAAR!"
+
+================================================================================
+                         MEMORY MANAGEMENT
+================================================================================
+
+ALLOCATION:
+    IAnimal* animal = new Lion(...);  ← Heap allocation
+                                      
+STORAGE:                              
+    zoo.animals.push_back(animal);    ← Store pointer
+                                      
+USAGE:                                
+    animal->makeSound();              ← Virtual dispatch
+                                      
+DEALLOCATION:                         
+    Zoo::~Zoo() {                     
+        for (auto* a : animals) {     
+            delete a;  ← Virtual destructor ensures
+        }              proper Lion cleanup then Animal cleanup
+    }
+
+================================================================================
+                         KEY OOP PRINCIPLES
+================================================================================
+
+1. ABSTRACTION
+   └─ IAnimal defines "what" without "how"
+   └─ Animal provides common "how" for shared behavior
+
+2. ENCAPSULATION
+   └─ Private: Internal implementation (maneSize, trunkLength)
+   └─ Protected: For derived classes (name, age, weight)
+   └─ Public: Interface for users (makeSound, eat, displayInfo)
+
+3. INHERITANCE
+   └─ "IS-A" relationship
+      - Lion IS-A Mammal IS-A Animal IS-A IAnimal
+      - Code reuse: Lion inherits all Animal/Mammal functionality
+
+4. POLYMORPHISM
+   └─ One interface, many implementations
+   └─ makeSound(): Different for each animal type
+   └─ Enables flexible, extensible code
+
+================================================================================
+                         VIRTUAL FUNCTION TABLE (VTABLE)
+================================================================================
+
+Lion Object Memory Layout:
+┌─────────────────┐
+│  vptr → VTable  │ ← Points to Lion's VTable
+├─────────────────┤
+│  name: "Simba"  │ ← Animal members
+│  age: 5         │
+│  weight: 190    │
+│  isHealthy: true│
+├─────────────────┤
+│  hasFur: true   │ ← Mammal members
+│  furColor: "Gold"│
+│  gestation: 110 │
+├─────────────────┤
+│  maneSize: 25   │ ← Lion members
+│  isAlpha: true  │
+└─────────────────┘
+
+Lion's VTable:
+┌──────────────────────┐
+│ makeSound → Lion::makeSound()      │
+│ eat → Lion::eat()                  │
+│ sleep → Animal::sleep()            │
+│ getSpecies → Lion::getSpecies()    │
+│ displayInfo → Lion::displayInfo()  │
+│ performCheckup → Lion::performCheckup() │
+│ ~Lion → Lion::~Lion()              │
+└──────────────────────┘
+
+When called through IAnimal*:
+    animal->makeSound();
+    1. Follow vptr to VTable
+    2. Look up makeSound entry
+    3. Call Lion::makeSound() ← Dynamic dispatch!
+
+================================================================================
+                         ASSIGNMENT COVERAGE
+================================================================================
+
+✅ Interface (IAnimal)                 ✅ Virtual Destructor
+✅ Abstract Base (Animal)              ✅ Rule of Three (Zoo)
+✅ Multi-level Inheritance (3 levels)  ✅ Dynamic Casting
+✅ Mammal Hierarchy                    ✅ Exception Handling
+✅ Bird Hierarchy                      ✅ Custom Exceptions
+✅ 6 Concrete Animals                  ✅ File I/O
+✅ Zoo Management                      ✅ Polymorphic Collections
+✅ Virtual Functions                   ✅ Memory Management
+✅ Polymorphism                        ✅ Interactive Menu
+✅ Encapsulation                       ✅ Comprehensive Docs
+
+================================================================================
+                         COMPILATION FLOW
+================================================================================
+
+Source Files → Preprocessor → Compiler → Assembler → Linker → Executable
+    ↓              ↓             ↓          ↓          ↓          ↓
+  .cpp/.h      Expanded       .o files   Object    Resolved   zoo_simulator
+               with                      code     references
+             #includes
+
+Makefile/build.bat automates this entire process!
+
+================================================================================
