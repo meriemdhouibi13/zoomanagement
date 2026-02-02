@@ -1,4 +1,4 @@
-#include "Zoo.h"
+﻿#include "Zoo.h"
 #include "Lion.h"
 #include "Elephant.h"
 #include "Monkey.h"
@@ -128,7 +128,6 @@ void displayMenu() {
     cout << "11. Demonstrate Polymorphism" << endl;
     cout << "12. Save to File" << endl;
     cout << "13. Load from File" << endl;
-    cout << "\n--- BONUS FEATURES ---" << endl;
     cout << "14. Use Animal Factory" << endl;
     cout << "15. Manage Enclosures" << endl;
     cout << "16. Veterinarian Demo" << endl;
@@ -327,7 +326,7 @@ void animalFactoryMenu(Zoo& zoo) {
     try {
         IAnimal* animal = AnimalFactory::createAnimal(species, name, age, weight);
         zoo.addAnimal(animal);
-        cout << "\n? Animal created and added using Factory Pattern!" << endl;
+        cout << "\n✓ Animal created and added using Factory Pattern!" << endl;
     }
     catch (const exception& e) {
         cerr << "Error: " << e.what() << endl;
@@ -353,7 +352,7 @@ void enclosureMenu() {
     cout << "\nFood requirement: " << lionEnclosure.calculateTotalFoodRequirement() 
          << " kg" << endl;
     
-    cout << "\n? Enclosure demo complete! (Animals will be cleaned up automatically)" << endl;
+    cout << "\n✓ Enclosure demo complete! (Animals will be cleaned up automatically)" << endl;
 }
 
 void veterinarianMenu(Zoo& zoo) {

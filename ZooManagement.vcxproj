@@ -90,9 +90,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Animal.h" />
+    <ClInclude Include="AnimalFactory.h" />
     <ClInclude Include="Bird.h" />
     <ClInclude Include="Eagle.h" />
     <ClInclude Include="Elephant.h" />
+    <ClInclude Include="Enclosure.h" />
     <ClInclude Include="Exceptions.h" />
     <ClInclude Include="IAnimal.h" />
     <ClInclude Include="Lion.h" />
@@ -100,7 +102,13 @@
     <ClInclude Include="Monkey.h" />
     <ClInclude Include="Parrot.h" />
     <ClInclude Include="Penguin.h" />
+    <ClInclude Include="Veterinarian.h" />
     <ClInclude Include="Zoo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".gitignore" />
+    <None Include="BONUS_FEATURES.md" />
+    <None Include="BONUS_SUMMARY.md" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
